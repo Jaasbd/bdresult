@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BD Result Portal | ফলাফল দেখুন</title>
+<meta name="description" content="SSC, HSC, JSC ও অন্যান্য পরীক্ষার ফলাফল রোল ও রেজিস্ট্রেশন দিয়ে দেখুন।">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7f5; --surface:#ffffff; --ink:#10201a; --muted:#5d6f66; --line:#dbe5df;
+  --brand:#006a4e; --brand-2:#0a8f6a; --accent:#f42a41; --soft:#e6f4ee;
+  --ok:#0a8f55; --ok-bg:#e3f6ec; --bad:#c62828; --bad-bg:#fdeaea;
+  --shadow:0 10px 30px -12px rgba(0,60,40,.25);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0c1511; --surface:#142019; --ink:#e8f2ed; --muted:#93a89d; --line:#223329;
+    --soft:#173126; --ok-bg:#12331f; --bad-bg:#3a1717; --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hind Siliguri",system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+
+/* hero */
+header.hero{
+  background:radial-gradient(1200px 400px at 85% -10%,rgba(244,42,65,.25),transparent 60%),
+             linear-gradient(135deg,var(--brand),#00432f);
+  color:#fff;padding:36px 0 90px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:.2px}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(255,255,255,.18)}
+.hero h1{margin:22px 0 6px;font-size:clamp(26px,5vw,40px);line-height:1.2}
+.hero p{margin:0;opacity:.85;max-width:560px}
+
+/* form */
+main{margin-top:-60px;padding-bottom:50px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+form.search{padding:22px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:5px}
+select,input{
+  width:100%;height:46px;padding:0 12px;border-radius:11px;border:1.5px solid var(--line);
+  background:var(--bg);color:var(--ink);font:inherit;font-size:16px;outline:none;transition:.15s;
+}
+select:focus,input:focus{border-color:var(--brand-2);box-shadow:0 0 0 3px rgba(10,143,106,.18)}
+.full{grid-column:1/-1}
+button.go{
+  width:100%;height:50px;margin-top:6px;border:0;border-radius:12px;cursor:pointer;
+  background:linear-gradient(135deg,var(--brand-2),var(--brand));color:#fff;font:inherit;font-weight:700;font-size:17px;
+  display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s,filter .15s;
+}
+button.go:hover{filter:brightness(1.07)} button.go:active{transform:scale(.99)}
+button.go[disabled]{opacity:.7;cursor:wait}
+.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;display:none}
+.loading .spin{display:inline-block}
+@keyframes s{to{transform:rotate(360deg)}}
+
+.msg{margin-top:16px;padding:14px 16px;border-radius:12px;background:var(--bad-bg);color:var(--bad);display:none;font-weight:500}
+.msg.show{display:block}
+
+/* result */
+#result{margin-top:22px;display:none}
+#result.show{display:block;animation:up .35s ease}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.r-head{display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:22px;border-bottom:1px solid var(--line)}
+.r-head h2{margin:0;font-size:24px}
+.sub{color:var(--muted);font-size:14px}
+.badge{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:13px;margin-top:8px}
+.badge.ok{background:var(--ok-bg);color:var(--ok)} .badge.bad{background:var(--bad-bg);color:var(--bad)}
+.gpa{
+  text-align:center;min-width:120px;padding:12px 18px;border-radius:16px;background:var(--soft);
+}
+.gpa b{display:block;font-family:"Space Grotesk",sans-serif;font-size:40px;line-height:1;color:var(--brand)}
+.gpa span{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.6px}
+.info{display:grid;grid-template-columns:repeat(2,1fr);gap:0;padding:6px 22px 8px}
+@media (max-width:560px){.info{grid-template-columns:1fr}}
+.row{padding:11px 0;border-bottom:1px dashed var(--line)}
+.row small{display:block;color:var(--muted);font-size:12px;font-weight:600}
+.row div{font-weight:500}
+h3.sec{margin:0;padding:18px 22px 8px;font-size:16px}
+.tbl{padding:0 22px 22px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:10px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+td.g{font-weight:700;text-align:center}
+th.g{text-align:center}
+.g-Ap{color:#0a8f55}.g-A{color:#2a9d3a}.g-Am{color:#6b9a1f}.g-B{color:#b08900}.g-C{color:#d2691e}.g-D{color:#d2691e}.g-F{color:var(--bad)}
+.actions{display:flex;gap:10px;padding:0 22px 22px;flex-wrap:wrap}
+.btn2{flex:1;min-width:130px;height:42px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.btn2:hover{border-color:var(--brand-2)}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:10px 16px 30px}
+footer a{color:var(--brand-2)}
+@media print{
+  header.hero,form.search,.actions,footer,.msg{display:none!important}
+  body{background:#fff} main{margin:0} .card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> BD Result Portal</div>
+    <h1>পরীক্ষার ফলাফল দেখুন</h1>
+    <p>SSC, HSC, JSC সহ বিভিন্ন পরীক্ষার ফলাফল — রোল ও রেজিস্ট্রেশন নম্বর দিয়ে এক ক্লিকে।</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <form class="search" id="form" autocomplete="off" novalidate>
+      <div class="grid">
+        <div>
+          <label for="exam">পরীক্ষা / Examination</label>
+          <select id="exam" required>
+            <option value="ssc">SSC / Dakhil / Equivalent</option>
+            <option value="hsc">HSC / Alim / Equivalent</option>
+            <option value="jsc">JSC / JDC</option>
+            <option value="psc">PSC</option>
+            <option value="ebtedayee">Ebtedayee</option>
+          </select>
+        </div>
+        <div>
+          <label for="year">সাল / Year</label>
+          <select id="year" required></select>
+        </div>
+        <div class="full">
+          <label for="board">বোর্ড / Board</label>
+          <select id="board" required>
+            <option value="barisal">Barisal</option>
+            <option value="chittagong">Chittagong</option>
+            <option value="comilla">Cumilla</option>
+            <option value="dhaka" selected>Dhaka</option>
+            <option value="dinajpur">Dinajpur</option>
+            <option value="jessore">Jashore</option>
+            <option value="mymensingh">Mymensingh</option>
+            <option value="rajshahi">Rajshahi</option>
+            <option value="sylhet">Sylhet</option>
+            <option value="madrasah">Madrasah</option>
+            <option value="tec">Technical</option>
+            <option value="dibs">DIBS (Diploma in Business Studies)</option>
+          </select>
+        </div>
+        <div>
+          <label for="roll">রোল নম্বর / Roll</label>
+          <input id="roll" inputmode="numeric" placeholder="যেমন: 277794" required>
+        </div>
+        <div>
+          <label for="reg">রেজিস্ট্রেশন নম্বর / Registration</label>
+          <input id="reg" inputmode="numeric" placeholder="যেমন: 2117829468" required>
+        </div>
+      </div>
+      <button class="go" id="go" type="submit"><span class="spin"></span><span id="gotxt">ফলাফল দেখুন</span></button>
+      <div class="msg" id="msg" role="alert"></div>
+    </form>
+  </section>
+
+  <section id="result" class="card" aria-live="polite">
+    <div class="r-head">
+      <div>
+        <h2 id="r-name">—</h2>
+        <div class="sub" id="r-sub">—</div>
+        <span class="badge" id="r-badge">—</span>
+      </div>
+      <div class="gpa"><b id="r-gpa">—</b><span>GPA</span></div>
+    </div>
+    <div class="info" id="r-info"></div>
+    <h3 class="sec">বিষয়ভিত্তিক গ্রেড</h3>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Code</th><th>Subject</th><th class="g">Grade</th></tr></thead>
+        <tbody id="r-grades"></tbody>
+      </table>
+    </div>
+    <div class="actions">
+      <button class="btn2" id="print" type="button">🖨 প্রিন্ট করুন</button>
+      <button class="btn2" id="again" type="button">↺ নতুন সার্চ</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  এটি একটি অনানুষ্ঠানিক ফলাফল দেখার টুল। সরকারি/চূড়ান্ত ফলাফলের জন্য শিক্ষা বোর্ডের অফিসিয়াল সাইট দেখুন।<br>
+  Powered by <a href="https://github.com/Junaid433/BD-Education-Board-API" target="_blank" rel="noopener">BD-Education-Board-API</a>
+</footer>
+
+<script>
+/* ---------- Config ---------- */
+const API_URL   = "https://eduboardapi.vercel.app/fetch"; // upstream API
+const PROXY_URL = "/api/result";                           // same-origin proxy (used if direct call is blocked by CORS)
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const bn = s => String(s ?? "").replace(/\d/g, d => "০১২৩৪৫৬৭৮৯"[d]); // (kept for optional use)
+
+// year dropdown
+(function(){
+  const y = new Date().getFullYear(), sel = $("year");
+  for (let i = y; i >= 2005; i--) sel.insertAdjacentHTML("beforeend", `<option value="${i}">${i}</option>`);
+  sel.value = y - 1 >= 2005 ? String(y) : String(y);
+})();
+
+// restore last used values
+try {
+  const saved = JSON.parse(localStorage.getItem("bdresult:last") || "{}");
+  for (const k of ["exam","year","board"]) if (saved[k]) $(k).value = saved[k];
+} catch(e){}
+
+function showError(t){ const m=$("msg"); m.textContent=t; m.classList.add("show"); }
+function clearError(){ $("msg").classList.remove("show"); }
+function setLoading(on){
+  $("go").disabled = on;
+  $("form").classList.toggle("loading", on);
+  $("gotxt").textContent = on ? "খোঁজা হচ্ছে…" : "ফলাফল দেখুন";
+}
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function gradeClass(g){
+  g = String(g||"").trim().toUpperCase();
+  if (g === "A+") return "g-Ap";
+  if (g === "A")  return "g-A";
+  if (g === "A-") return "g-Am";
+  if (g === "B")  return "g-B";
+  if (g === "C" || g === "D") return "g-C";
+  if (g === "F")  return "g-F";
+  return "";
+}
+
+/* ---------- API call (direct → proxy fallback) ---------- */
+async function callApi(payload){
+  const opts = {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  };
+  // 1) same-origin proxy (vercel.json rewrite, no CORS issue)  2) direct call as fallback
+  let res, via = "proxy", text, data = null;
+  const parse = t => { try { return JSON.parse(t); } catch(e){ return null; } };
+  try {
+    res = await fetch(PROXY_URL, opts);
+    text = await res.text();
+    data = parse(text);
+    if (res.status === 404 && !data) throw new Error("proxy missing");
+  } catch (e) {
+    via = "direct";
+    try {
+      res = await fetch(API_URL, opts);
+      text = await res.text();
+      data = parse(text);
+    } catch (e2) {
+      throw new Error("সার্ভারে সংযোগ করা যায়নি। ইন্টারনেট চেক করে আবার চেষ্টা করুন।");
+    }
+  }
+  const apiMsg = data && (data.error || data.message || data.detail);
+  const snippet = (text || "").replace(/\s+/g, " ").slice(0, 160);
+  console.log("[result]", via, res.status, snippet);
+
+  if (!res.ok) {
+    if (res.status === 404)
+      throw new Error((apiMsg ? apiMsg + " — " : "") + "এই তথ্যে কোনো ফলাফল পাওয়া যায়নি (404)। পরীক্ষা, সাল, বোর্ড, রোল ও রেজিস্ট্রেশন ঠিক আছে কিনা দেখুন। [" + via + "]");
+    throw new Error((apiMsg || `সার্ভার ত্রুটি (${res.status})`) + " [" + via + "]");
+  }
+  if (!data) throw new Error("সার্ভার থেকে সঠিক উত্তর পাওয়া যায়নি।");
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+/* ---------- Render ---------- */
+function render(d){
+  const result = String(d.result || "");
+  const passed = /pass/i.test(result) && !/fail/i.test(result);
+  $("r-name").textContent = d.name || "—";
+  $("r-sub").textContent  = [d.exam_type, d.board && d.board + " Board", d.group].filter(Boolean).join(" · ");
+  const b = $("r-badge");
+  b.textContent = result || "—";
+  b.className = "badge " + (passed ? "ok" : "bad");
+  $("r-gpa").textContent = d.gpa || "—";
+
+  const rows = [
+    ["Roll", d.roll], ["Registration", d.reg],
+    ["Father's Name", d.father_name], ["Mother's Name", d.mother_name],
+    ["Date of Birth", d.dob], ["Group", d.group],
+    ["Institute", d.institute], ["Board", d.board]
+  ].filter(r => r[1]);
+  $("r-info").innerHTML = rows.map(([k,v]) =>
+    `<div class="row"><small>${esc(k)}</small><div>${esc(v)}</div></div>`).join("");
+
+  const grades = Array.isArray(d.grades) ? d.grades : [];
+  $("r-grades").innerHTML = grades.length
+    ? grades.map(g => `<tr><td>${esc(g.code)}</td><td>${esc(g.subject)}</td><td class="g ${gradeClass(g.grade)}">${esc(g.grade)}</td></tr>`).join("")
+    : `<tr><td colspan="3" style="color:var(--muted)">বিষয়ভিত্তিক গ্রেড পাওয়া যায়নি।</td></tr>`;
+
+  const box = $("result");
+  box.classList.add("show");
+  box.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* ---------- Events ---------- */
+$("form").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  clearError();
+  $("result").classList.remove("show");
+
+  const payload = {
+    exam:  $("exam").value,
+    year:  $("year").value,
+    board: $("board").value,
+    roll:  $("roll").value.trim(),
+    reg:   $("reg").value.trim()
+  };
+  if (!/^\d{3,10}$/.test(payload.roll)) return showError("সঠিক রোল নম্বর দিন (শুধু সংখ্যা)।");
+  if (!/^\d{5,15}$/.test(payload.reg))  return showError("সঠিক রেজিস্ট্রেশন নম্বর দিন (শুধু সংখ্যা)।");
+
+  setLoading(true);
+  try {
+    const data = await callApi(payload);
+    try { localStorage.setItem("bdresult:last", JSON.stringify({exam:payload.exam, year:payload.year, board:payload.board})); } catch(e){}
+    render(data);
+  } catch (e) {
+    showError(e.message || "ফলাফল আনা যায়নি। তথ্য ঠিক আছে কিনা দেখে আবার চেষ্টা করুন।");
+  } finally {
+    setLoading(false);
+  }
+});
+$("print").onclick = () => window.print();
+$("again").onclick = () => { $("result").classList.remove("show"); $("roll").value=""; $("reg").value=""; window.scrollTo({top:0,behavior:"smooth"}); $("roll").focus(); };
+</script>
+</body>
+</html>
