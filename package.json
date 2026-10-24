@@ -1,0 +1,7 @@
+{
+  "name": "bd-result-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bangladesh education board result website",
+  "engines": { "node": ">=18" }
+}
