@@ -237,19 +237,29 @@ async function callApi(payload){
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify(payload)
   };
-  let res;
+  let res, via = "direct";
   try {
     res = await fetch(API_URL, opts);
   } catch (e) {
     // Network/CORS failure → try same-origin proxy
-    res = await fetch(PROXY_URL, opts);
+    via = "proxy";
+    try { res = await fetch(PROXY_URL, opts); }
+    catch (e2) { throw new Error("সার্ভারে সংযোগ করা যায়নি। ইন্টারনেট চেক করে আবার চেষ্টা করুন।"); }
   }
   const text = await res.text();
   let data = null;
   try { data = JSON.parse(text); } catch(e){}
+  const apiMsg = data && (data.error || data.message || data.detail);
+  const snippet = (text || "").replace(/\s+/g, " ").slice(0, 160);
+  console.log("[result]", via, res.status, snippet);
+
   if (!res.ok) {
-    const m = data && (data.error || data.message);
-    throw new Error(m || `সার্ভার ত্রুটি (${res.status})`);
+    // proxy path returned a non-JSON 404 → the /api/result function isn't deployed
+    if (via === "proxy" && res.status === 404 && !data)
+      throw new Error("Proxy function (/api/result) deploy হয়নি। repo-র root-এ api/result.js আছে কিনা দেখুন।");
+    if (res.status === 404)
+      throw new Error((apiMsg ? apiMsg + " — " : "") + "এই তথ্যে কোনো ফলাফল পাওয়া যায়নি (404)। পরীক্ষা, সাল, বোর্ড, রোল ও রেজিস্ট্রেশন ঠিক আছে কিনা দেখুন। [" + via + "]");
+    throw new Error((apiMsg || `সার্ভার ত্রুটি (${res.status})`) + " [" + via + "]");
   }
   if (!data) throw new Error("সার্ভার থেকে সঠিক উত্তর পাওয়া যায়নি।");
   if (data.error) throw new Error(data.error);
